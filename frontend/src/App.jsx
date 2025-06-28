@@ -6,11 +6,14 @@ import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";  
+import { axiosInstance } from "./lib/axios";
 
 
 
 const App = () => {
-  return (
+  
+
+    return (
     <div >
 
       <Navbar />
