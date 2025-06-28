@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/muskiteer/chat-app/src/lib"
+	"github.com/muskiteer/chat-app/src/middleware"
 	"github.com/muskiteer/chat-app/src/routes"
 )
 
@@ -36,7 +37,9 @@ func main(){
 	routes.AuthRoutes(r,userCollection)
 	routes.MessagesRoutes(r,userCollection)
 
+	handler := middleware.CORSMiddleware(r)
+
 	log.Println("Starting server on PORT:",PORT)
-	log.Fatal(http.ListenAndServe(":"+PORT, r))
+	log.Fatal(http.ListenAndServe(":"+PORT, handler))
 	
 }
