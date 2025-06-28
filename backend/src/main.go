@@ -34,6 +34,7 @@ func main(){
 	userCollection := client.Database("chat_db").Collection("users")
 	r:=mux.NewRouter()
 	routes.AuthRoutes(r,userCollection)
+	routes.MessagesRoutes(r,userCollection)
 
 	log.Println("Starting server on PORT:",PORT)
 	log.Fatal(http.ListenAndServe(":"+PORT, r))

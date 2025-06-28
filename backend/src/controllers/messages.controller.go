@@ -12,7 +12,7 @@ import (
 
 func GetUsersForSidebar(collection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Context().Value("Id")
+		userID := r.Context().Value("id")
 		if userID == nil {
 			utils.JSONError(w, http.StatusUnauthorized, "User not authenticated")
 			return
@@ -64,7 +64,3 @@ func SendMessage(collection *mongo.Collection) http.HandlerFunc {
 		}
 	}
 }
-
-
-
-
