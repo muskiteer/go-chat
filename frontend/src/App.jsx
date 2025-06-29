@@ -7,6 +7,8 @@ import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";  
+import { Navigate } from "react-router-dom";
+
 
 
 import { useAuthStore } from "./store/useAuthStore";
@@ -40,6 +42,7 @@ const App = () => {
     <BrowserRouter>
     
     <div>
+      
       <Navbar />
      <Routes>
       <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />}/>

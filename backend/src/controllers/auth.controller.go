@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-	"os"
+	 "os"
 	
 	"github.com/muskiteer/chat-app/internals"
 	"github.com/muskiteer/chat-app/utils"
@@ -13,6 +13,8 @@ import (
 	
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+
 
 type SignupRequest struct {
 	Username       string `json:"username"`
@@ -57,6 +59,8 @@ func SignupHandler(collection *mongo.Collection) http.HandlerFunc {
 		})
 	}
 }
+
+
 
 func LoginHandler(collection *mongo.Collection) http.HandlerFunc {
 

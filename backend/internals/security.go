@@ -3,7 +3,7 @@ package internals
 import (
 	"errors"
 	"github.com/microcosm-cc/bluemonday"
-	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"	
 )
 
 func SanitizeInput(input string) string {
