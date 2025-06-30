@@ -9,7 +9,7 @@ import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";  
 import { Navigate } from "react-router-dom";
 
-
+import { Toaster } from "react-hot-toast";
 
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
@@ -50,6 +50,8 @@ const App = () => {
       <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />}/>
       <Route path="/settings" element={<SettingsPage/>} />
      </Routes>
+
+     <Toaster />
 
       
     </div>

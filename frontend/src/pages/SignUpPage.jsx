@@ -4,6 +4,7 @@ import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User } from "lucide-re
 import {useAuthStore} from "./../store/useAuthStore.js";
 import { Link } from "react-router-dom";
 import AuthImagePattern from './../components/AuthImagePattern.jsx';
+import { toast } from 'react-hot-toast';
 
 
 
@@ -11,17 +12,46 @@ import AuthImagePattern from './../components/AuthImagePattern.jsx';
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData,setFormData] = useState({
-    fullName:"",
+    username:"",
     email: "",
-    password:"",
+    hashed_password:"",
   }); 
 
   const {signup,isSigningUp} = useAuthStore();
 
-  const validateForm =()=>{}
-  const handleSubmit =(e)=>{
-    e.preventDefault()
+   const validateForm = () => {
+  if (!formData.username.trim()) {
+    toast.error("Full name is required");
+    return false;
   }
+  if (!formData.email.trim()) {
+    toast.error("Email is required");
+    return false;
+  }
+  if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    toast.error("Invalid email format");
+    return false;
+  }
+  if (!formData.hashed_password) {
+    toast.error("Password is required");
+    return false;
+  }
+  if (formData.hashed_password.length < 6) {
+    toast.error("Password must be at least 6 characters");
+    return false;
+  }
+
+  return true;
+};
+
+ const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (!validateForm()) return;
+
+  signup(formData);
+};
+
 
 
   return (
@@ -47,7 +77,7 @@ const SignUpPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Full Name</span>
+                <span className="label-text font-medium">userName</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -57,8 +87,8 @@ const SignUpPage = () => {
                   type="text"
                   className={`input input-bordered w-full pl-10`}
                   placeholder="John Doe"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 />
               </div>
             </div>
@@ -93,8 +123,8 @@ const SignUpPage = () => {
                   type={showPassword ? "text" : "password"}
                   className={`input input-bordered w-full pl-10`}
                   placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  value={formData.hashed_password}
+                  onChange={(e) => setFormData({ ...formData, hashed_password: e.target.value })}
                 />
                 <button
                   type="button"
