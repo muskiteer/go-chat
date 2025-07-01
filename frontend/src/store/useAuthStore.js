@@ -32,9 +32,34 @@ export const useAuthStore = create((set) => ({
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.message || "Username or email already exists");
     } finally {
       set({ isSigningUp: false });
+    }
+  },
+
+  logout: async () => {
+    try {
+        await axiosInstance.post('/logout');
+        set({authUser: null});
+        toast.success("Logged out successfully");
+    } catch (error) {
+        toast.error(error.response.data.message || "Logout failed");
+        
+    }
+  },
+   login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/login", data);
+      set({ authUser: res.data });
+      toast.success("Logged in successfully");
+
+      get().connectSocket();
+    } catch (error) {
+      toast.error(error.response.data.message ||"Login failed");
+    } finally {
+      set({ isLoggingIn: false });
     }
   },
 
