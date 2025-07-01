@@ -57,8 +57,16 @@ export const useAuthStore = create((set) => ({
 
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response.data.message ||"Login failed");
-    } finally {
+  const message =
+    error.response?.data?.message?.trim() ||
+    (error.response?.status === 401
+      ? "Invalid email or password"
+      : error.message) ||
+    "An unexpected error occurred";
+
+  toast.error(message);
+}
+ finally {
       set({ isLoggingIn: false });
     }
   },
