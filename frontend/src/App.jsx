@@ -12,6 +12,7 @@ import { Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { useAuthStore } from "./store/useAuthStore";
+import { useThemeStore } from "./store/useThemeStore";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
 
@@ -20,7 +21,8 @@ import { Loader } from "lucide-react";
 
 const App = () => {
 
-    const {authUser,checkAuth,isCheckingAuth} = useAuthStore()
+    const {authUser,checkAuth,isCheckingAuth} = useAuthStore();
+    const {theme} = useThemeStore();
   useEffect(() => {
     checkAuth();
    },[checkAuth]);
@@ -41,7 +43,7 @@ const App = () => {
   return (
     <BrowserRouter>
     
-    <div>
+    <div data-theme={theme}>
       
       <Navbar />
      <Routes>

@@ -8,6 +8,7 @@ export const useAuthStore = create((set) => ({
     authUser: null,
     isSigningUp: false,
     isLoggingIn: false,
+    onlineUsers: [],
 
     isCheckingAuth: true,
 
@@ -55,7 +56,7 @@ export const useAuthStore = create((set) => ({
       set({ authUser: res.data });
       toast.success("Logged in successfully");
 
-      get().connectSocket();
+      // get().connectSocket();
     } catch (error) {
   const message =
     error.response?.data?.message?.trim() ||

@@ -8,23 +8,32 @@ import (
 	"github.com/muskiteer/chat-app/src/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/muskiteer/chat-app/utils"
+	"github.com/muskiteer/chat-app/src/middleware"
 )
 
 func GetUsersForSidebar(collection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Context().Value("id")
-		if userID == nil {
-			utils.JSONError(w, http.StatusUnauthorized, "User not authenticated")
+		val := r.Context().Value(middleware.UserIDKey)
+		userIDStr, ok := val.(string)
+		if !ok {
+			utils.JSONError(w, http.StatusUnauthorized, "Invalid user ID in context")
 			return
 		}
 
-		err := models.GetOtherUsers(w, r, collection, userID.(primitive.ObjectID))
+		userID, err := primitive.ObjectIDFromHex(userIDStr)
+		if err != nil {
+			utils.JSONError(w, http.StatusUnauthorized, "Invalid ObjectID format")
+			return
+		}
+
+		err = models.GetOtherUsers(w, r, collection, userID)
 		if err != nil {
 			utils.JSONError(w, http.StatusInternalServerError, "Failed to retrieve users")
 			return
 		}
 	}
 }
+
 
 func GetMessagesForUser(collection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
