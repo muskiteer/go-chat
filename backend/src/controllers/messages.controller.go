@@ -37,9 +37,21 @@ func GetUsersForSidebar(collection *mongo.Collection) http.HandlerFunc {
 
 func GetMessagesForUser(collection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Context().Value("Id")
-		
-		
+		// Get the user ID from context (stored as a string by the middleware)
+		userIDStr, ok := r.Context().Value(middleware.UserIDKey).(string)
+		if !ok {
+			utils.JSONError(w, http.StatusUnauthorized, "Invalid user context")
+			return
+		}
+
+		// Convert to ObjectID
+		userID, err := primitive.ObjectIDFromHex(userIDStr)
+		if err != nil {
+			utils.JSONError(w, http.StatusBadRequest, "Invalid user ID format")
+			return
+		}
+
+		// Get other user ID from route param
 		params := mux.Vars(r)
 		otherUserID, err := primitive.ObjectIDFromHex(params["id"])
 		if err != nil {
@@ -47,13 +59,15 @@ func GetMessagesForUser(collection *mongo.Collection) http.HandlerFunc {
 			return
 		}
 
-		err = models.GetMessagesForUser(w, r, collection, userID.(primitive.ObjectID), otherUserID)
+		// Call the model function
+		err = models.GetMessagesForUser(w, r, collection, userID, otherUserID)
 		if err != nil {
 			utils.JSONError(w, http.StatusInternalServerError, "Failed to retrieve messages")
 			return
 		}
 	}
 }
+
 
 func SendMessage(collection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

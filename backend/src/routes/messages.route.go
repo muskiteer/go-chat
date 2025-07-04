@@ -11,6 +11,6 @@ import (
 
 func MessagesRoutes(r *mux.Router,userCollection *mongo.Collection) {
 	r.Handle("/users", middleware.Authenticate(userCollection)(http.HandlerFunc(controllers.GetUsersForSidebar(userCollection)))).Methods("GET")
-	r.Handle("/:id", middleware.Authenticate(userCollection)(http.HandlerFunc(controllers.GetMessagesForUser(userCollection)))).Methods("GET")
-	r.Handle("/send/:id", middleware.Authenticate(userCollection)(http.HandlerFunc(controllers.SendMessage(userCollection)))).Methods("POST")
+	r.Handle("/{id}", middleware.Authenticate(userCollection)(http.HandlerFunc(controllers.GetMessagesForUser(userCollection)))).Methods("GET")
+	r.Handle("/send/{id}", middleware.Authenticate(userCollection)(http.HandlerFunc(controllers.SendMessage(userCollection)))).Methods("POST")
 }

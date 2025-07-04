@@ -24,7 +24,7 @@ func Authenticate(userCollection *mongo.Collection) func(http.Handler) http.Hand
 
 			claims, err := utils.VerifyJWT(cookie.Value, userCollection)
 			if err != nil {
-				utils.JSONError(w, http.StatusUnauthorized, "err.Error()")
+				utils.JSONError(w, http.StatusUnauthorized, err.Error())
 				return
 			}
 
