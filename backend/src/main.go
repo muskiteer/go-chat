@@ -33,9 +33,10 @@ func main(){
 		PORT = "8000"
 	}
 	userCollection := client.Database("chat_db").Collection("users")
+	messageCollection := client.Database("chat_db").Collection("messages")
 	r:=mux.NewRouter()
 	routes.AuthRoutes(r,userCollection)
-	routes.MessagesRoutes(r,userCollection)
+	routes.MessagesRoutes(r,messageCollection, userCollection)
 
 	handler := middleware.CORSMiddleware(r)
 

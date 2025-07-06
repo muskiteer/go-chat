@@ -71,7 +71,19 @@ func GetMessagesForUser(collection *mongo.Collection) http.HandlerFunc {
 
 func SendMessage(collection *mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Context().Value("Id")
+		userIDStr, ok := r.Context().Value(middleware.UserIDKey).(string)
+		if !ok {
+			utils.JSONError(w, http.StatusUnauthorized, "Invalid user context")
+			return
+		}
+
+		// Convert to ObjectID
+		userID, err := primitive.ObjectIDFromHex(userIDStr)
+		if err != nil {
+			utils.JSONError(w, http.StatusBadRequest, "Invalid user ID format")
+			return
+		}
+
 		
 		params := mux.Vars(r)
 		otherUserID, err := primitive.ObjectIDFromHex(params["id"])
@@ -80,7 +92,7 @@ func SendMessage(collection *mongo.Collection) http.HandlerFunc {
 			return
 		}
 
-		err = models.SendMessage(w, r, collection, userID.(primitive.ObjectID), otherUserID)
+		err = models.SendMessage(w, r, collection, userID, otherUserID)
 		if err != nil {
 			utils.JSONError(w, http.StatusInternalServerError, "Failed to send message")
 			return
