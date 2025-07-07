@@ -1,20 +1,21 @@
 package models
 
 import (
-	"net/http"
-	"errors"
 	"context"
 	"encoding/json"
+	"errors"
 	
+	"net/http"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"time"
 )
 
 type Message struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
 	SenderId  primitive.ObjectID `bson:"sender_id" json:"sender_id"`
 	ReceiverId primitive.ObjectID `bson:"receiver_id" json:"receiver_id"`
 	Content   string              `bson:"content" json:"content"`
@@ -57,8 +58,10 @@ func GetMessagesForUser(w http.ResponseWriter, r *http.Request, collection *mong
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
+		
 		return errors.New("failed to retrieve messages")
 	}
+	
 	defer cursor.Close(ctx)
 
 	var messages []Message

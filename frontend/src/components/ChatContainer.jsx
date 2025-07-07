@@ -7,6 +7,8 @@ import MessageInput from "./MessageInput.jsx";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
+// import avatar from "../../assets/avatar.png";
+
 
 const ChatContainer = () => {
   const {
@@ -21,12 +23,10 @@ const ChatContainer = () => {
   const messageEndRef = useRef(null);
 
   useEffect(() => {
-    getMessages(selectedUser.id);
-
-    // subscribeToMessages();
-
-    // return () => unsubscribeFromMessages();
-  }, [selectedUser.id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+    if (selectedUser?.id) { // Add null check
+      getMessages(selectedUser.id); // Changed to _id
+    }
+  }, [selectedUser?.id, getMessages]); // Simplified dependencies
 
   useEffect(() => {
     if (messageEndRef.current && messages) {
@@ -39,7 +39,7 @@ const ChatContainer = () => {
       <div className="flex-1 flex flex-col overflow-auto">
         <ChatHeader />
         <MessageSkeleton />
-        <MessageInput />
+        <MessageInput />          
       </div>
     );
   }
@@ -51,18 +51,14 @@ const ChatContainer = () => {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
-            key={message.id}
+            key={message._id}
             className={`chat ${message.sender_id === authUser.id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >
             <div className=" chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
-                  src={
-                    message.sender_id === authUser.id
-                      ? authUser.profilePic || avatar
-                      : selectedUser.profilePic || avatar
-                  }
+                  src={avatar}
                   alt="profile pic"
                 />
               </div>
