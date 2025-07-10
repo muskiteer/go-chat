@@ -12,16 +12,15 @@ export const useAuthStore = create((set) => ({
 
     isCheckingAuth: true,
 
-    checkAuth: async () =>{
+    checkAuth: async () => {
         try {
             const res = await axiosInstance.get('/check');
-
-            set ({authUser: res.data});
+            set({ authUser: res.data.user || res.data }); // Extract user if it exists, otherwise use res.data
         } catch (error) {
             console.log('Error checking auth:', error); 
-            set({authUser: null});
+            set({ authUser: null });
         } finally {
-            set({isCheckingAuth: false});
+            set({ isCheckingAuth: false });
         }
     },
 
@@ -29,9 +28,9 @@ export const useAuthStore = create((set) => ({
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/signup", data);
-      set({ authUser: res.data });
+      set({ authUser: res.data.user || res.data }); // Extract user if it exists
       toast.success("Account created successfully");
-      get().connectSocket();
+      // get().connectSocket();
     } catch (error) {
       toast.error(error.response.data.message || "Username or email already exists");
     } finally {
@@ -53,7 +52,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/login", data);
-      set({ authUser: res.data });
+      set({ authUser: res.data.user || res.data }); // Extract user if it exists
       toast.success("Logged in successfully");
 
       // get().connectSocket();

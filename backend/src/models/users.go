@@ -10,7 +10,7 @@ import (
 )
 
 type User struct {
-	ID              primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	ID              primitive.ObjectID `bson:"_id,omitempty" json:"_id"` // Changed from json:"id" to json:"_id"
 	Username        string             `bson:"username" json:"username"`
 	Email           string             `bson:"email" json:"email"`
 	Hashed_Password string             `bson:"hashed_password" json:"-"`
@@ -34,7 +34,7 @@ func InsertUser(ctx context.Context, collection *mongo.Collection, username, ema
 		Hashed_Password: hashedPassword,
 		CreatedAt:       time.Now(),
 	}
-	
+
 	_, err = collection.InsertOne(ctx, newUser)
 	if err != nil {
 		return nil, err
