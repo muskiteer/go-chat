@@ -1,5 +1,6 @@
 import { useChatStore } from "../store/useChatStore";
 import { useEffect, useRef } from "react";
+import { MessageCircle, Sparkles } from "lucide-react";
 import avatar from "./../../assets/avatar.png";
 
 import ChatHeader from "./ChatHeader";
@@ -16,15 +17,13 @@ const ChatContainer = () => {
     getMessages,
     isMessagesLoading,
     selectedUser,
-    subscribeToMessages,
-    unsubscribeFromMessages,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
   // Add this debugging
-  console.log('authUser:', authUser);
-  console.log('authUser.id:', authUser.userId);
+  // console.log('authUser:', authUser);
+  // console.log('authUser.id:', authUser.userId);
 
   useEffect(() => {
     if (selectedUser?.id) { // Add null check
@@ -32,8 +31,8 @@ const ChatContainer = () => {
     }
   }, [selectedUser?.id, getMessages]); // Simplified dependencies
 
-  console.log('selectedUser:', selectedUser);
-  console.log('selectedUser.id:', selectedUser.id);
+  // console.log('selectedUser:', selectedUser);
+  // console.log('selectedUser.id:', selectedUser.id);
 
   useEffect(() => {
     if (messageEndRef.current && messages) {
@@ -51,26 +50,62 @@ const ChatContainer = () => {
     );
   }
 
+   const EmptyMessageState = () => (
+    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+      <div className="relative mb-6">
+        {/* Animated background circles */}
+        <div className="absolute inset-0 animate-pulse">
+          <div className="w-32 h-32 bg-primary/10 rounded-full animate-ping"></div>
+        </div>
+        <div className="relative z-10 w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center">
+          <MessageCircle className="w-12 h-12 text-primary animate-bounce" />
+        </div>
+      </div>
+      
+      <div className="space-y-4 max-w-md">
+        <div className="flex items-center gap-2 justify-center">
+          <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
+          <h3 className="text-xl font-semibold text-base-content">
+            Start the conversation!
+          </h3>
+          <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
+        </div>
+        
+        <p className="text-base-content/60 text-sm leading-relaxed">
+          Say hello to <span className="font-medium text-primary">{selectedUser?.username}</span> and 
+          break the ice. Every great conversation starts with a simple message! 💬
+        </p>
+        
+        {/* Fun emoji animation */}
+        <div className="flex justify-center gap-2 text-2xl">
+          <span className="animate-bounce" style={{animationDelay: '0ms'}}>👋</span>
+          <span className="animate-bounce" style={{animationDelay: '100ms'}}>😊</span>
+          <span className="animate-bounce" style={{animationDelay: '200ms'}}>💭</span>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex-1 flex flex-col overflow-auto">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => {
-          // Add debugging for each message
-          console.log('message.sender_id:', message.sender_id);
-          console.log('authUser.id:', authUser?.userId);
-          console.log('Are they equal?:', message.sender_id === authUser?.userId);
 
+        {messages.length === 0 ? (
+          <EmptyMessageState />
+        ) : null}
+        {messages.map((message, index) => {
           const isMyMessage = message.sender_id === authUser?.userId;
+          const isLastMessage = index === messages.length - 1;
           
           return (
             <div
               key={message._id}
               className={`chat ${isMyMessage ? "chat-end" : "chat-start"}`}
-              ref={messageEndRef}
+              ref={isLastMessage ? messageEndRef : null}
             >
-              <div className=" chat-image avatar">
+              <div className="chat-image avatar">
                 <div className="size-10 rounded-full border">
                   <img
                     src={avatar}

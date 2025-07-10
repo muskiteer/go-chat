@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast"; // Changed from default import to named import
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
 
@@ -29,22 +29,23 @@ export const useChatStore = create((set, get) => ({
       const res = await axiosInstance.get(`/${userId}`);
       const data = res.data;
 
+      // Set messages regardless of whether they're empty or not
+      set({ messages: data || [] });
+
+      // Show friendly message only for empty results
       
 
-      if (data === null || data.length === 0) {
-        set({ messages: [] });
-        toast.info("Start chatting!");
-      }
-      else set({ messages: data });
-
     } catch (error) {
-      set({ messages: [] });
       console.error("Error loading messages:", error);
-      toast.error(error?.response?.data?.message || "no messages found");
+      set({ messages: [] });
+      
+      // Only show error for actual network/server errors
+      toast.error("Failed to load messages. Please try again.");
     } finally {
       set({ isMessagesLoading: false });
     }
   },
+
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();     
     try {
@@ -56,4 +57,4 @@ export const useChatStore = create((set, get) => ({
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
-  }));
+}));
