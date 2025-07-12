@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	
+	// "github.com/muskiteer/chat-app/utils"
+
 	"net/http"
+	
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -75,6 +77,7 @@ func GetMessagesForUser(w http.ResponseWriter, r *http.Request, collection *mong
 	}
 	return nil
 }
+
 
 func SendMessage(w http.ResponseWriter, r *http.Request, collection *mongo.Collection, userId primitive.ObjectID, otherUserId primitive.ObjectID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

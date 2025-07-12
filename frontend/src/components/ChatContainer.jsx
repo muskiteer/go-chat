@@ -26,10 +26,11 @@ const ChatContainer = () => {
   // console.log('authUser.id:', authUser.userId);
 
   useEffect(() => {
-    if (selectedUser?.id) { // Add null check
-      getMessages(selectedUser.id); // Changed to id
+   
+    if (selectedUser?._id) { // Add null check
+      getMessages(selectedUser._id); // Changed to _id
     }
-  }, [selectedUser?.id, getMessages]); // Simplified dependencies
+  }, [selectedUser?._id, getMessages]); // Simplified dependencies
 
   // console.log('selectedUser:', selectedUser);
   // console.log('selectedUser.id:', selectedUser.id);

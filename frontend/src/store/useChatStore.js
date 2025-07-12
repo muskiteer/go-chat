@@ -31,6 +31,7 @@ export const useChatStore = create((set, get) => ({
 
       // Set messages regardless of whether they're empty or not
       set({ messages: data || [] });
+     
 
       // Show friendly message only for empty results
       
