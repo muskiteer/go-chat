@@ -7,6 +7,14 @@ import avatar from "../../assets/avatar.png";
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  // if (selectedUser?._id) {
+  //   const isOnline = onlineUsers.includes(selectedUser._id);
+  //   console.log("🟢 Selected User ID:", selectedUser._id);
+  //   console.log("🟢 Online Users:", onlineUsers);
+  //   console.log("🟢 User is", isOnline ? "Online ✅" : "Offline ❌");
+  // } else {
+  //   console.log("⚠️ No selected user");
+  // }
 
   return (
     <div className="p-2.5 border-b border-base-300">
@@ -18,12 +26,13 @@ const ChatHeader = () => {
               <img src={avatar} alt={selectedUser.username} />
             </div>
           </div>
-
+            
           {/* User info */}
           <div>
             <h3 className="font-medium">{selectedUser.username}</h3>
             <p className="text-sm text-base-content/70">
-              {onlineUsers.includes(selectedUser.id) ? "Online" : "Offline"}
+              {/* console.log({ onlineUsers }); */}
+              {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
             </p>
           </div>
         </div>

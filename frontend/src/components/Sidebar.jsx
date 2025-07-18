@@ -11,6 +11,8 @@ const Sidebar = () => {
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
+  console.log({users});  
+
   useEffect(() => {
     getUsers();
   }, [getUsers]);
@@ -73,7 +75,8 @@ const Sidebar = () => {
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{user.username || "hello"}</div>
               <div className="text-sm text-zinc-400">
-                {onlineUsers.includes(user.id) ? "Online" : "Offline"}
+                
+                {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>
             </div>
           </button>

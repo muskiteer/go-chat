@@ -4,10 +4,7 @@ import (
 	"context"
 	"net/http"
 	"os"
-
-	// "github.com/gorilla/mux"
 	"log"
-	// "github.com/rs/cors"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/muskiteer/chat-app/src/lib"
@@ -32,9 +29,14 @@ func main(){
 	if PORT == "" {
 		PORT = "8000"
 	}
+
+
 	userCollection := client.Database("chat_db").Collection("users")
 	messageCollection := client.Database("chat_db").Collection("messages")
+	
 	r:=mux.NewRouter()
+
+	r.HandleFunc("/ws", lib.HandleWebSocket)
 	routes.AuthRoutes(r,userCollection)
 	routes.MessagesRoutes(r,messageCollection, userCollection)
 
