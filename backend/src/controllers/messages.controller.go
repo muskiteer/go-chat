@@ -97,5 +97,7 @@ func SendMessage(collection *mongo.Collection) http.HandlerFunc {
 			utils.JSONError(w, http.StatusInternalServerError, "Failed to send message")
 			return
 		}
+
+		
 	}
 }

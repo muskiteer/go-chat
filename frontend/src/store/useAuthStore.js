@@ -2,7 +2,7 @@ import axios from 'axios';
 import {create} from 'zustand';
 import { axiosInstance } from '../lib/axios';
 import { toast } from 'react-hot-toast';
-
+import { useChatStore } from './useChatStore';
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
@@ -85,18 +85,17 @@ export const useAuthStore = create((set, get) => ({
     };
 
     ws.onmessage = (event) => {
-      const payload = JSON.parse(event.data);
-      if (payload.event === "getOnlineUsers") {
-        // console.log("Online users received:", payload.data);
-        set({ onlineUsers: payload.data });
-      }
-    };
+  const payload = JSON.parse(event.data);
+  if (payload.event === "getOnlineUsers") {
+    set({ onlineUsers: payload.data });
+  }
+};
     
 
 
     ws.onclose = () => {
       console.log("WebSocket disconnected");
-      set({ socket: null, onlineUsers: [] });``
+      set({ socket: null, onlineUsers: [] });
     };
 
     set({ socket: ws });

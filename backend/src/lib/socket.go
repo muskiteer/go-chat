@@ -17,9 +17,21 @@ var upgrader = websocket.Upgrader{
 }
 
 var (
-	userSocketmap = make(map[string]*websocket.Conn)
-	mu sync.Mutex
+	UserSocketMap = make(map[string]*websocket.Conn)
+	Mu            sync.Mutex
 )
+
+
+func PrintUserSocketMap() {
+	Mu.Lock()
+	defer Mu.Unlock()
+
+	log.Println("Current UserSocketMap:")
+	for userId := range UserSocketMap {
+		log.Println(" -", userId)
+	}
+}
+
 
 func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	userId := r.URL.Query().Get("userId")
@@ -38,9 +50,9 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	log.Println("WebSocket connection established for user:", userId)
 
 	// Save the user socket
-	mu.Lock()
-	userSocketmap[userId] = conn
-	mu.Unlock()
+	Mu.Lock()
+	UserSocketMap[userId] = conn
+	Mu.Unlock()
 
 	// Broadcast online users to all clients
 	broadcastOnlineUsers()
@@ -56,9 +68,9 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 		// Remove socket and broadcast
 		log.Println("user disconnected:", userId)
-		mu.Lock()
-		delete(userSocketmap, userId)
-		mu.Unlock()
+		Mu.Lock()
+		delete(UserSocketMap, userId)
+		Mu.Unlock()
 		broadcastOnlineUsers()
 	}()
 }
@@ -66,26 +78,29 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 
 
 func broadcastOnlineUsers() {
-	mu.Lock()
-	defer mu.Unlock()
+	Mu.Lock()
+	defer Mu.Unlock()
 
-	users:= make([]string, 0, len(userSocketmap))
-	for uid := range userSocketmap {
+	users := make([]string, 0, len(UserSocketMap))
+	for uid := range UserSocketMap {
 		users = append(users, uid)
 	}
 
-	payload,_:= json.Marshal(map[string]interface{}{
+	payload, _ := json.Marshal(map[string]interface{}{
 		"event": "getOnlineUsers",
 		"data":  users,
 	})
 
-	for _, conn := range userSocketmap {
+	for _, conn := range UserSocketMap {
 		if err := conn.WriteMessage(websocket.TextMessage, payload); err != nil {
 			log.Println("Error sending online users to client:", err)
 			conn.Close()
 		}
 	}
 	log.Println("Broadcasted online users:", users)
+
+
+	// PrintUserSocketMap()
 }
 
 

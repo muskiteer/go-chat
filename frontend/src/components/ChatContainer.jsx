@@ -15,9 +15,14 @@ const ChatContainer = () => {
   const {
     messages,
     getMessages,
+    subscribeToMessages,
+    
     isMessagesLoading,
-    selectedUser,
+      
+    // socket
   } = useChatStore();
+  const { socket } = useAuthStore();
+  const { selectedUser } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
@@ -26,11 +31,28 @@ const ChatContainer = () => {
   // console.log('authUser.id:', authUser.userId);
 
   useEffect(() => {
-   
-    if (selectedUser?._id) { // Add null check
-      getMessages(selectedUser._id); // Changed to _id
+  if (!selectedUser?._id) return;
+  getMessages(selectedUser._id);
+}, [selectedUser?._id]);
+
+  useEffect(() => {
+    // console.log({socket});
+  if (!selectedUser?._id || !socket) return;
+    // console.log("Subscribing to messages for user:", selectedUser._id);
+    // console.log(selectedUser._id)
+  getMessages(selectedUser._id);
+  const unsubscribe = subscribeToMessages();
+  // console.log("subscribeToMessages called ✅");
+
+  return () => {
+    try {
+      // console.log("Unsubscribing from messages for user:", selectedUser._id);
+      unsubscribe();
+    } catch (err) {
+      console.error("Error during unsubscribe:", err);
     }
-  }, [selectedUser?._id, getMessages]); // Simplified dependencies
+  };
+}, [selectedUser?._id, socket]);// Simplified dependencies
 
   // console.log('selectedUser:', selectedUser);
   // console.log('selectedUser.id:', selectedUser.id);

@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	// "github.com/muskiteer/chat-app/utils"
+
+	
+	// "github.com/muskiteer/chat-app/internals/realtime"
+	"github.com/muskiteer/chat-app/internals/realtime"
 
 	"net/http"
-	
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -93,10 +95,21 @@ func SendMessage(w http.ResponseWriter, r *http.Request, collection *mongo.Colle
 	message.CreatedAt = time.Now()
 
 	// Insert the message into the collection
-	_, err := collection.InsertOne(ctx, message)
+	res, err := collection.InsertOne(ctx, message)
 	if err != nil {
 		return errors.New("failed to send message")
 	}
+
+	message.ID = res.InsertedID.(primitive.ObjectID)
+
+	realtime.SendMessageToUser(otherUserId.Hex(), realtime.Message{
+	ID: message.ID,
+	SenderId: message.SenderId,
+	ReceiverId: message.ReceiverId,
+	Content: message.Content,
+	CreatedAt: message.CreatedAt,
+})
+
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
